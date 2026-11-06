@@ -2,7 +2,7 @@
 
 | Field | Type | Rules |
 | --- | --- | --- |
-| `userName` | string | Required, unique, trimmed; 3–30 of `[a-zA-Z0-9_.]` (validated in DTOs) |
+| `userName` | string | Required, trimmed; 3–30 of `[a-zA-Z0-9_.]` (validated in DTOs). Unique **ignoring case** (index `userName_ci`, collation `en` strength 2): "Lina" and "lina" cannot both exist, lookups by name ignore case, and the name is shown as typed |
 | `email` | string | Required, unique, lowercase, ≤ 254 characters |
 | `phone` | string \| null | Optional and private, E.164 (`+97333001122`); unique among accounts that have one; searchable by its digits in people search; shown to the owner and admins only |
 | `passwordHash` | string | bcrypt hash; `select: false` |

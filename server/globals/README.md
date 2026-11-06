@@ -58,6 +58,7 @@
 | --- | --- |
 | `001-legacy-schema` | Upgrades data from the original app: `password_digest` → `passwordHash`, `isAdmin` → `role`, `image` → `avatarUrl`, `isActive=false` → soft-deleted; adds `code` and audit fields; links old comments to their videos; maps legacy local video files to `provider: local` media |
 | `002-sync-indexes` | Creates every model index |
+| `003-case-insensitive-usernames` | Swaps the case-sensitive `userName_1` index for `userName_ci`; stops without changes and lists the names when two accounts differ only by case |
 
 `npm run media:cleanup` purges CDN files of deleted media that failed earlier and removes stale pending uploads. Run it on a schedule (for example daily).
 
