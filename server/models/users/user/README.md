@@ -6,7 +6,13 @@
 | `email` | string | Required, unique, lowercase, ≤ 254 characters |
 | `passwordHash` | string | bcrypt hash; `select: false` |
 | `role` | `Role` | `admin` \| `user` (default `user`); indexed |
-| `image` | string \| null | Avatar URL, ≤ 2048 characters |
-| `tokenVersion` | number | Default 0; `select: false`. Incremented to revoke tokens |
+| `gender` | `Gender` \| null | `male` \| `female`; required at registration; picks the standard avatar |
+| `avatar` | ObjectId → Media \| null | The uploaded profile picture |
+| `avatarUrl` | string \| null | Delivery URL of `avatar`, ≤ 2048 characters; null means the standard picture |
+| `bio` | string | ≤ 150 characters |
+| `followersCount`, `followingCount`, `videosCount` | number | Counters (see [models](../../README.md#counters)) |
+| `tokenVersion` | number | `select: false`; incremented to revoke every session at once |
 
-Plus the [base entity](../../base/README.md) fields. Deactivation is a soft delete. Uniqueness checks include soft-deleted users, so their email and username are never reused.
+Plus the [base entity](../../base/README.md) fields. Deactivation is a soft delete. Uniqueness checks include soft-deleted users, so an email or username is never reused.
+
+**Standard avatars:** when `avatarUrl` is null, clients show `male.svg`, `female.svg`, or `neutral.svg` (unknown gender, such as migrated accounts). The files live in the web client's `public/avatars/` and the mobile app's `assets/avatars/`.

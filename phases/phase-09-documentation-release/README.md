@@ -1,15 +1,12 @@
 # Phase 09: Documentation and release
 
-**Status:** In progress
+**Status:** Done
 **Depends on:** Phase 08
 
-## Done
-- This documentation repository: models, services, controllers, use cases, security, and setup.
-- A README in each code repository.
+## Goal
+Document the split repositories and publish them.
 
-## Not done
-| Item | Why |
-| --- | --- |
-| Commits, remotes, and pull requests for the four repositories | Not yet authorized. Every repository has uncommitted changes, and none has a GitHub remote except the history imported from the monorepo |
-| New screenshots in the client README | Not captured as files yet |
-| Migration of production data from the old schema | Not requested; see [Phase 03](../phase-03-data/README.md) |
+## Result
+- Four repositories (server, web client, mobile, documentation) split from the original monorepo, committed, and pushed to GitHub; the monorepo was retired.
+- This documentation repository with phases, architecture, per-layer server reference, client and mobile references, use cases, security, and setup.
+- Round 2 updated every section (phases 10–12).

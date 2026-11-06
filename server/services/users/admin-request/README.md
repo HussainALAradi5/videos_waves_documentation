@@ -41,7 +41,7 @@
 **Business logic:**
 1. Atomically moves `pending → accepted | rejected` and stores `decidedBy`, `decidedAt`, and `decisionNote`.
 2. If the request was not pending, reports `conflict` (or `notFound` if it does not exist).
-3. On `accepted`, sets the requester's `role` to `admin`. The change applies on their next request, because `authenticate` reloads the role.
+3. On `accepted`, sets the requester's `role` to `admin` **in the same transaction**, so a request is never accepted without the promotion. The change applies on their next request, because `resolveAccessToken` reloads the role.
 
 **Exceptions:**
 | Exception | When | HTTP status |

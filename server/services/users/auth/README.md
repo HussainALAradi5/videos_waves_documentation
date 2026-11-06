@@ -1,73 +1,60 @@
-# Auth service
+# Auth and session services
 
-### `buildAuthResponse(user: User): AuthResponseDto`
+`services/users/auth/auth.service.ts` and `services/users/auth/session.service.ts`. Tokens are described in [token](token.md).
 
-**Purpose:** Issues tokens for a user and maps the user to `UserResponseDto`. Shared by register, login, and change password.
+## Auth service
 
-**Exceptions:** None.
+### `buildAuthResponse(user: User, userAgent: string): Promise<AuthResponseDto>`
+**Purpose:** Starts a session on this device (`startSession`) and returns `{ accessToken, refreshToken, user }`. Shared by register, login, and change password.
 
-### `assertIdentityAvailable(identity: { email?: string; userName?: string }, exceptId?: string): Promise<void>`
+### `assertIdentityAvailable(identity: { email?, userName? }, exceptId?: string): Promise<void>`
+**Purpose:** Rejects an email or username used by another account, including deactivated ones.
 
-**Purpose:** Rejects an email or username that another account (including a deactivated one) already uses.
-
-**Cases covered:**
-| Case | Result |
-| --- | --- |
-| Both free, or used only by `exceptId` | Returns |
-| Email taken | Rejected |
-| Username taken | Rejected |
-
-**Exceptions:**
-| Exception | When | HTTP status |
+| Exception | When | HTTP |
 | --- | --- | --- |
-| `conflict` | Email or username in use | 409 |
+| `conflict` `USERS.EMAIL_TAKEN` / `USERS.USER_NAME_TAKEN` | Identity in use | 409 |
 
-### `register(dto: RegisterDto): Promise<AuthResponseDto>`
+### `register(dto: RegisterDto, userAgent: string): Promise<AuthResponseDto>`
+**Business logic:** `assertIdentityAvailable` → pre-generates the user id so the user is their own `createdBy` → hashes the password (bcrypt, `BCRYPT_SALT_ROUNDS`) → saves with role `user` and the required `gender` → `buildAuthResponse`.
+**Exceptions:** 409 as above; 400 from the DTO (weak password, invalid username, missing gender).
 
-**Purpose:** Creates an account and signs it in.
+### `login(dto: LoginDto, userAgent: string): Promise<AuthResponseDto>`
+**Business logic:** A value containing `@` is an email (lowercased), otherwise a username. Unknown accounts still run one bcrypt comparison against `TIMING_SAFE_DUMMY_HASH`, so the response time does not reveal which accounts exist.
 
+| Exception | When | HTTP |
+| --- | --- | --- |
+| `unauthorized` `AUTH.INVALID_CREDENTIALS` | Unknown, deactivated, or wrong password (one message for all) | 401 |
+
+## Session service
+
+### `resolveAccessToken(token: string): Promise<AuthUser>`
+**Purpose:** Used by the HTTP `authenticate` middleware and the socket handshake. Verifies the access token and reloads the role, `tokenVersion`, and the session, so deactivation, revoked devices, and role changes take effect at once.
+**Exceptions:** `unauthorized` `AUTH.TOKEN_INVALID` (401) for a bad, expired, or revoked token.
+
+### `startSession(user: User, userAgent: string): Promise<AuthTokensDto>`
+**State change:** Creates a `Session` with a new `tokenId` and returns its first token pair.
+
+### `refreshSession(refreshToken: string): Promise<AuthTokensDto>`
 **Business logic:**
-1. `assertIdentityAvailable(dto)`.
-2. Pre-generates the user id, so the new user is the `createdBy` actor.
-3. Hashes the password with bcrypt (`BCRYPT_SALT_ROUNDS`) and saves the user with role `user`.
-4. Returns `buildAuthResponse(user)`.
-
-**Cases covered:**
 | Case | Result |
 | --- | --- |
-| Valid input | 201 with a session |
-| Duplicate email or username | Rejected |
-| Weak password or invalid username (DTO) | 400 before the service runs |
+| Token is the session's current `tokenId` | Rotates `tokenId` atomically and returns new tokens |
+| Token is `previousTokenId`, within 30 seconds of the rotation | Returns tokens for the current id (two tabs refreshing at once) |
+| Another request rotated the same token a moment ago | Shares that result instead of forking the session |
+| Any other older token | **Reuse detected:** the session is revoked and its sockets closed |
+| Invalid token, revoked session, or changed `tokenVersion` | Rejected |
 
-**Exceptions:**
-| Exception | When | HTTP status |
+| Exception | When | HTTP |
 | --- | --- | --- |
-| `conflict` | Identity in use | 409 |
+| `unauthorized` `AUTH.REFRESH_INVALID` | Invalid, expired, revoked | 401 |
+| `unauthorized` `AUTH.REFRESH_REUSED` | Reuse of a rotated token | 401 |
 
-### `login(dto: LoginDto): Promise<AuthResponseDto>`
+### `listSessions(actor: AuthUser): Promise<SessionResponseDto[]>`
+**Purpose:** The user's active devices, newest first, with `isCurrent` for this one.
 
-**Purpose:** Signs in with a username or an email (any value containing `@` is treated as an email, lowercased).
+### `revokeSession(sessionId: string, actor: AuthUser): Promise<void>`
+**Purpose:** Signs one device out (`POST /auth/logout` revokes the current one). Its access token stops working at once and its sockets close.
+**Exceptions:** `notFound` `AUTH.SESSION_NOT_FOUND` (404) for another user's or an unknown session.
 
-**Business logic:** Loads the active user with secrets, compares the bcrypt hash, and returns a session. The same error is returned for an unknown user and a wrong password, so the response does not reveal whether an account exists.
-
-**Exceptions:**
-| Exception | When | HTTP status |
-| --- | --- | --- |
-| `unauthorized` | Unknown, deactivated, or wrong password | 401 |
-
-### `refresh(dto: RefreshTokenDto): Promise<AuthTokensDto>`
-
-**Purpose:** Exchanges a valid refresh token for a new token pair.
-
-**Business logic:** Verifies the token as `refresh`, loads the user's `role` and `tokenVersion`, requires the versions to match, and issues tokens with the current role.
-
-**Exceptions:**
-| Exception | When | HTTP status |
-| --- | --- | --- |
-| `unauthorized` | Invalid or expired token, deactivated user, or revoked version | 401 |
-
-### `logout(userId: string): Promise<void>`
-
-**Purpose:** Revokes every token of the user by incrementing `tokenVersion`.
-
-**Exceptions:** None.
+### `revokeAllSessions(userId: string): Promise<void>`
+**Purpose:** Signs every device out (`POST /auth/logout-all`, password change, deactivation).
