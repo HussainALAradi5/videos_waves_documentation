@@ -38,4 +38,15 @@ Each account's email is `<name>@videos-waves.test`. Admins share `SEED_ADMIN_PAS
 
 ## Screenshots
 
-Screenshots belong in the web client repository under `docs/screenshots/`. They have not been captured for the round 2 design yet; see [phase 12](phases/phase-12-ui-redesign/README.md#follow-ups).
+Real screenshots live with each client, in one section each:
+
+- Web (desktop dark and light, tablet): [videos_waves_client → Screenshots](https://github.com/HussainALAradi5/videos_waves_client#screenshots)
+- Mobile (375 px): [videos_waves_mobile → Screenshots](https://github.com/HussainALAradi5/videos_waves_mobile#screenshots)
+
+## Known limits
+
+- **Not deployed yet:** the live demo needs free Atlas, ImageKit, Render, and Vercel accounts (see [deployment](deployment/README.md)).
+- **ImageKit** uploads have not been run against a real account; tests and checks used the local provider.
+- **Render free plan** sleeps after 15 minutes; the first visit then takes about a minute.
+- **Mobile** was checked as a web build and a release APK build, not on a phone or emulator.
+- **Demo videos** have no thumbnail images on mobile (linked sample clips).

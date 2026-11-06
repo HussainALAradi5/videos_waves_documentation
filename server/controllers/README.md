@@ -82,7 +82,7 @@
 | `POST /chat/conversations` | `startDirect` | Open a direct chat | `StartDirectDto` (`userName`) | `ConversationResponseDto` | 400, 401, 403, 404 |
 | `POST /chat/groups` | `createGroup` | New group | `CreateGroupDto` (`title`, `userNames`) | `ConversationResponseDto` (201) | 400, 401, 403, 404, 409 |
 | `GET /chat/conversations/:conversationId` | `getConversation` | Thread header and members | `ConversationParamsDto` | `ConversationResponseDto` | 401, 403, 404 |
-| `PATCH /chat/conversations/:conversationId` | `updateConversation` | Rename, mute | `UpdateConversationDto` | `ConversationResponseDto` | 400, 401, 403 |
+| `PATCH /chat/conversations/:conversationId` | `updateConversation` | Rename; mute for `8h`, `1w`, `always`, or `off` (the response's `me.mutedUntil` says until when) | `UpdateConversationDto` | `ConversationResponseDto` | 400, 401, 403 |
 | `DELETE /chat/conversations/:conversationId` | `hideConversation` | Delete chat for me | — | `{ message }` | 401, 403 |
 | `POST …/:conversationId/accept` | `acceptRequest` | Accept a request | — | `ConversationResponseDto` | 401, 403, 409 |
 | `POST …/:conversationId/read` | `markConversationRead` | Seen | — | `{ message }` | 401, 403 |
