@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | `userName` | string | Required, unique, trimmed; 3–30 of `[a-zA-Z0-9_.]` (validated in DTOs) |
 | `email` | string | Required, unique, lowercase, ≤ 254 characters |
-| `phone` | string \| null | Optional and private, E.164 (`+97333001122`); unique among accounts that have one; only for exact-match people search; shown to the owner and admins only |
+| `phone` | string \| null | Optional and private, E.164 (`+97333001122`); unique among accounts that have one; searchable by its digits in people search; shown to the owner and admins only |
 | `passwordHash` | string | bcrypt hash; `select: false` |
 | `role` | `Role` | `admin` \| `user` (default `user`); indexed |
 | `gender` | `Gender` \| null | `male` \| `female`; required at registration; picks the standard avatar |

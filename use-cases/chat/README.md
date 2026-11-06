@@ -50,3 +50,10 @@
 
 ### UC-CHAT-13 Inbox folders and badge
 - **Main flow:** Messages → Inbox, Requests, Groups, Unread → rows with avatar, presence, preview, time, unread dot → the tab badge shows unread chats and updates live.
+
+### UC-CHAT-14 Chat options (as in e_clinic)
+- **Where:** the ⋯ on an inbox row (web) or a long-press on it (mobile), the ⋯ in the chat header, and chat info (web).
+- **Mute:** for 8 hours, for 1 week, or until I unmute → `PATCH /chat/conversations/:id { mute: '8h' | '1w' | 'always' | 'off' }` → a muted bell on the row; no sound or unread badge from it; chat info shows "Muted until …". Unmute appears instead while muted.
+- **Leave group** (groups): confirmation → you stop getting messages and cannot write; earlier messages stay readable.
+- **Delete chat:** confirmation → gone from your list only; it comes back if someone writes again.
+- **Messages:** hover (web) or long-press (mobile) → React, Reply, Copy, Edit (15 minutes), Unsend, Delete for me.

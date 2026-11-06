@@ -14,7 +14,7 @@
 | `getConversation(id, actor)` | One conversation with members; `lastReadAt` and `isOnline` are `null` where privacy hides them | 403, 404 |
 | `getUnreadTotal(actor)` | Unread chats for the Messages badge | — |
 | `startDirect(dto, actor)` | The one direct chat per pair (`directKey`), created on first use and hidden for the other person until the first message. Lands in their requests unless they follow you and have not restricted you | 400 `CHAT.CANNOT_MESSAGE_SELF`; 403 `CHAT.CANNOT_MESSAGE_USER` (block); 403 `CHAT.MESSAGES_FOLLOWING_ONLY` (their setting); 404 |
-| `updateConversation(id, dto, actor)` | Rename (group admins) and mute (any member, for themselves, up to a week or indefinitely) | 400, 403 |
+| `updateConversation(id, dto, actor)` | Rename (group admins) and mute (any member, for themselves): `mute` is `8h`, `1w`, `always`, or `off` and sets `mutedUntil`; the older `isMuted` boolean still works | 400, 403 |
 | `acceptRequest(id, actor)` | Moves a request into the inbox so the person can reply | 409 when not a request |
 | `hideConversation(id, actor)` | "Delete chat" or decline a request: hidden until a newer message | 403 |
 | `markConversationRead(id, actor)` | Resets the unread count and tells the others (`conversation:read`), except people the reader restricted | 403 |
