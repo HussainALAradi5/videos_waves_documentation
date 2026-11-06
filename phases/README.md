@@ -14,5 +14,6 @@
 | 10 Media and social graph | Done (ImageKit adapter not yet run against a real account) | 04 | [phase-10-media-social](phase-10-media-social/README.md) |
 | 11 Chat | Done | 10 | [phase-11-chat](phase-11-chat/README.md) |
 | 12 UI redesign (web and mobile) | Done, with the follow-ups listed | 10, 11 | [phase-12-ui-redesign](phase-12-ui-redesign/README.md) |
+| 13 Live demo and admin user management | Ready to deploy (not deployed yet) | 12 | [phase-13-live-demo](phase-13-live-demo/README.md) |
 
 Round 1 is phases 01–09; round 2 is phases 10–12. Verification dates are 2026-11-06.

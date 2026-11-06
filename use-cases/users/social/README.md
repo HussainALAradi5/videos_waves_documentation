@@ -30,3 +30,19 @@
 ### UC-SOC-08 User changes a setting
 - **Main flow:** Settings → a switch or the custom dropdown → the change applies at once (theme switches instantly) → `PATCH /users/me/settings` → rolled back with a message on failure.
 - **Effects:** Activity status and read receipts off → others see no online dot or Seen. "Who can message you: People I follow" → others cannot start a chat. Bubble colour → your chat bubbles.
+
+### UC-ADM-01 Admin deactivates or reactivates a user
+- **Actor:** Admin. **Where:** the Users page (web `/admin/users`; mobile Settings → Manage users) or the ⋯ menu on a profile.
+- **Main flow:** Deactivate → confirmation → `PATCH /users/:userName/status { isActive: false }` → the row shows **Inactive** in red. The person is signed out everywhere and cannot sign in ("deactivated by an admin"). Their profile, videos, and comments are hidden from everyone; admins still see the profile with an Inactive badge.
+- **Reactivate:** Activate → everything is visible again as before; nothing was deleted.
+- **Rules:** Admins cannot be deactivated (no button; 403), and an admin cannot target themselves (400).
+
+### UC-ADM-02 Admin browses, searches, and filters accounts
+- **Main flow:** Users page → every account (active, inactive, admins) with **Admin** / **Member** and **Active** / **Inactive** badges → search by username or email (debounced) → filter by role and status → pages of 20.
+
+### UC-ADM-03 Admin exports accounts
+- **Main flow (web):** Export CSV → downloads `videos-waves-users.csv` with the current search and filters (up to 5000 rows, no passwords).
+
+### UC-ADM-04 Admin imports accounts
+- **Main flow (web):** Import CSV → optionally download the template → pick a file → "n accounts ready", listing rows that miss a username, email, or gender → Import → "x created, y skipped" with each reason → **Download new accounts** (a CSV of one-time temporary passwords, shown once).
+- **Rules:** At most 500 rows; existing emails or usernames are skipped, never changed; usernames follow the registration rules.

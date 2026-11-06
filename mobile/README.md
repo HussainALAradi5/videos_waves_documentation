@@ -43,6 +43,7 @@
 | `ChatSocketController` | Connects the socket while signed in; Messages badge |
 | `InboxController` | Folders; reloads quietly on live events |
 | `ThreadController` (+ `ThreadSocketBinding`, `TypingTracker`, `ThreadMessageActions`) | Cursor-paged messages, live events, typing, send, edit, unsend, delete for me, react, accept |
+| `AdminUsersController` | Admin users list (Settings → Manage users): debounced search, role and status filters, `setActive`. Export and import are on the web only |
 
 ## Routing (`lib/config/routes`)
 

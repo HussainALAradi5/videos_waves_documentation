@@ -13,6 +13,7 @@
 | `/messages`, `/messages/[conversationId]` | Inbox and thread (two panes on desktop, stacked on phones) | Signed in |
 | `/settings` | Account and avatar, preferences by key, sessions, blocked and restricted lists, admin request | Signed in |
 | `/admin/requests` | Review admin requests | Admin |
+| `/admin/users` | Every account in a table: role and status badges, search, role and status filters, pagination, Activate / Deactivate (not for admins), Export CSV, and Import CSV with a preview and a one-time password download | Admin |
 | `/login`, `/register` | Auth (register asks for gender) | Guests only (`GuestOnly`) |
 
 `app/template.tsx` animates each page in (enter only). The shell has a side nav on desktop and a bottom tab bar below 768 px, with the unread badge on Messages.

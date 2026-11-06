@@ -25,15 +25,16 @@ On GitHub: [server](https://github.com/HussainALAradi5/videos_waves_server), [we
 | [Use cases](use-cases/README.md) | What happens for each actor and flow |
 | [Security](security/README.md) | Controls, privacy rules, fixed findings, known limits |
 | [Setup](setup/README.md) | Running and verifying each repository |
+| [Deployment](deployment/README.md) | Free live demo: Atlas, ImageKit, Render, Vercel, GitHub Pages; demo accounts |
 
 ## Roles
 
 | Role | Can do | Seeded development account |
 | --- | --- | --- |
-| `admin` | Everything a user can, plus delete any video or comment, list users, and accept or reject admin requests | `admin` / `admin@videos-waves.test` |
-| `user` | Upload, edit, and delete own videos; like; comment and reply; delete comments on own videos; follow, block, restrict; chat; request admin access | `viewer` / `viewer@videos-waves.test` |
+| `admin` | Everything a user can, plus delete any video or comment, list users, and accept or reject admin requests | `admin`, `moderator` |
+| `user` | Upload, edit, and delete own videos; like; comment and reply; delete comments on own videos; follow, block, restrict; chat; request admin access | `viewer`, `lina`, `omar`, `maya` |
 
-Seed passwords come from `SEED_ADMIN_PASSWORD` and `SEED_USER_PASSWORD`, or are generated into the server's ignored `.seed-credentials.local.json`. Seeding refuses to run in production. The seed's demo videos are public sample clips (MDN CC0 and Blender CC BY), linked rather than stored.
+Each account's email is `<name>@videos-waves.test`. Admins share `SEED_ADMIN_PASSWORD` and users share `SEED_USER_PASSWORD`; in development missing passwords are generated into the server's ignored `.seed-credentials.local.json`. In production, seeding runs only for a demo (`ALLOW_DEMO_SEED=true`); see [deployment](deployment/README.md). The seed's demo videos are public sample clips (MDN CC0 and Blender CC BY), linked rather than stored.
 
 ## Screenshots
 

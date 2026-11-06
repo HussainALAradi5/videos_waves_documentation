@@ -18,7 +18,7 @@
 
 | Method and path | Service function | Why | Role | Request DTO | Response DTO | Exceptions |
 | --- | --- | --- | --- | --- | --- | --- |
-| `GET /users` | `userService.listUsers` | Admin directory | admin | `UserQueryDto` | `UserResponseDto[]` + meta | 401, 403 |
+| `GET /users` | `userService.listUsers` | Admin directory: every account, active and inactive, admins included | admin | `UserQueryDto` (search, role, `status=active\|inactive`) | `UserResponseDto[]` (with `isActive`) + meta | 401, 403 |
 | `GET /users/search` | `userService.searchUsers` | People search | Optional | `UserSearchQueryDto` | `UserSummaryResponseDto[]` + meta | 400 |
 | `GET /users/me` | `userService.getProfile` | Current account | Signed in | — | `UserResponseDto` | 401, 404 |
 | `PATCH /users/me` | `userService.updateProfile` | Username, email, bio | Signed in | `UpdateProfileDto` | `UserResponseDto` | 400, 401, 409 |
@@ -35,6 +35,9 @@
 | `PUT` / `DELETE /users/:userName/follow` | `followUser` / `unfollowUser` | Follow, unfollow (idempotent) | Signed in | `UserNameParamsDto` | `FollowStateResponseDto` | 400, 401, 404, 409 |
 | `PUT` / `DELETE /users/:userName/block` | `blockUser` / `unblockUser` | Block, unblock | Signed in | `UserNameParamsDto` | `RelationStateResponseDto` | 400, 401, 404 |
 | `PUT` / `DELETE /users/:userName/restrict` | `restrictUser` / `unrestrictUser` | Restrict, unrestrict | Signed in | `UserNameParamsDto` | `RelationStateResponseDto` | 400, 401, 404 |
+| `PATCH /users/:userName/status` | `accountStatusService.setAccountActive` | Activate or deactivate a user | admin | `UpdateAccountStatusDto` (`isActive`) | `UserResponseDto` | 400, 401, 403, 404 |
+| `GET /users/export` | `userTransferService.exportUsers` | Download the filtered list as CSV | admin | `UserQueryDto` (search, role, status) | `text/csv` attachment | 401, 403 |
+| `POST /users/import` | `userTransferService.importUsers` | Create accounts from CSV rows | admin | `ImportUsersDto` (`rows`, at most 500) | `ImportUsersResponseDto` (`created` with temporary passwords, `skipped` with reasons) | 400, 401, 403 |
 
 ## MediaController (`controllers/media/media`, base `/media`)
 
