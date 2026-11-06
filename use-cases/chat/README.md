@@ -57,3 +57,16 @@
 - **Leave group** (groups): confirmation → you stop getting messages and cannot write; earlier messages stay readable.
 - **Delete chat:** confirmation → gone from your list only; it comes back if someone writes again.
 - **Messages:** hover (web) or long-press (mobile) → React, Reply, Copy, Edit (15 minutes), Unsend, Delete for me.
+
+## Chat look, ticks, and unsend (round 3)
+
+| ID | Flow | Result |
+| --- | --- | --- |
+| UC-CHAT-15 | Settings → Chats: bubble shape (Rounded, Square, Minimal), my colour, their colour, message pop-ups | Saved as settings on the account, so web and phone match; a live preview shows the change |
+| UC-CHAT-16 | Send a message | ✓ when sent, grey ✓✓ when some of a group saw it, blue ✓✓ when everyone read it (hidden read receipts count as unread) |
+| UC-CHAT-22 | Unsend, then press Undo within 5 seconds | The message comes back; the server was never asked (it is unsent only when the 5 seconds pass) |
+| UC-CHAT-17 | Unsend a message someone already read | Refused (409 "already seen"); the clients hide Unsend once it is seen; Delete for me still works |
+| UC-CHAT-18 | Right-click a message (web, or Shift+F10) | Opens the emoji bar; long-press does the same on the phone |
+| UC-CHAT-19 | Right-click a chat in the inbox (web) or hold it (phone) | Mute › (8 hours, 1 week, until I unmute), Chat background, Block (direct chats), Delete chat, Leave group |
+| UC-CHAT-20 | Chat options → Chat background | Your own wallpaper for that one chat; nobody else sees it |
+| UC-CHAT-21 | Inbox filters All, Unread, Read, Groups, Requests | Paged lists from `folder=inbox|unread|read|groups|requests` |

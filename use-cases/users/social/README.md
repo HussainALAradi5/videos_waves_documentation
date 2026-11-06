@@ -48,3 +48,5 @@
 ### UC-ADM-04 Admin imports accounts
 - **Main flow (web):** Import CSV → optionally download the template → pick a file → "n accounts ready", listing rows that miss a username, email, or gender → Import → "x created, y skipped" with each reason → **Download new accounts** (a CSV of one-time temporary passwords, shown once).
 - **Rules:** At most 500 rows; existing emails or usernames are skipped, never changed; usernames follow the registration rules.
+
+Private accounts, follow requests, Discover, notifications, and status: [private-accounts.md](private-accounts.md).

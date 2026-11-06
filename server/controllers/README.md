@@ -27,11 +27,14 @@
 | `PATCH /users/me/password` | `userService.changePassword` | Change password (signs other devices out) | Signed in (auth limit) | `ChangePasswordDto` | `AuthResponseDto` | 400, 401 |
 | `GET /users/me/settings` | `settingsService.getSettings` | Read settings | Signed in | — | `SettingsValues` | 401 |
 | `PATCH /users/me/settings` | `settingsService.updateSettings` | Change settings by key | Signed in | `UpdateSettingsDto` | `SettingsValues` | 400, 401 |
+| `GET /users/me/follow-requests` | `followRequestService.listFollowRequests` | People waiting to follow your private account | Signed in | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta | 401 |
+| `PUT /users/me/follow-requests/:userName` | `followRequestService.acceptFollowRequest` | Accept: becomes a follow (with counters) and notifies them | Signed in | `UserNameParamsDto` | `{ userName, followsYou: true }` | 401, 404 |
+| `DELETE /users/me/follow-requests/:userName` | `followRequestService.declineFollowRequest` | Decline (idempotent; they are not told) | Signed in | `UserNameParamsDto` | `{ userName, followsYou: false }` | 401, 404 |
 | `GET /users/me/blocked` | `blockService.listBlockedUsers` | Blocked accounts | Signed in | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta | 401 |
 | `GET /users/me/restricted` | `restrictionService.listRestrictedUsers` | Restricted accounts | Signed in | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta | 401 |
-| `GET /users/:userName` | `profileService.getProfile` | Profile with relations | Optional | `UserNameParamsDto` | `ProfileResponseDto` | 404 |
-| `GET /users/:userName/followers` | `followService.listFollows('followers')` | Followers | Optional | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta | 404 |
-| `GET /users/:userName/following` | `followService.listFollows('following')` | Following | Optional | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta | 404 |
+| `GET /users/:userName` | `profileService.getProfile` | Profile with relations, plus `isPrivate`, `canViewContent`, `isRequested`, `requestedYou` | Optional | `UserNameParamsDto` | `ProfileResponseDto` | 404 |
+| `GET /users/:userName/followers` | `followService.listFollows('followers')` | Followers | Optional | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta (rows include `isRequested`) | 403 `SOCIAL.PRIVATE_ACCOUNT`, 404 |
+| `GET /users/:userName/following` | `followService.listFollows('following')` | Following | Optional | `RelationQueryDto` | `UserSummaryResponseDto[]` + meta (rows include `isRequested`) | 403 `SOCIAL.PRIVATE_ACCOUNT`, 404 |
 | `PUT` / `DELETE /users/:userName/follow` | `followUser` / `unfollowUser` | Follow, unfollow (idempotent) | Signed in | `UserNameParamsDto` | `FollowStateResponseDto` | 400, 401, 404, 409 |
 | `PUT` / `DELETE /users/:userName/block` | `blockUser` / `unblockUser` | Block, unblock | Signed in | `UserNameParamsDto` | `RelationStateResponseDto` | 400, 401, 404 |
 | `PUT` / `DELETE /users/:userName/restrict` | `restrictUser` / `unrestrictUser` | Restrict, unrestrict | Signed in | `UserNameParamsDto` | `RelationStateResponseDto` | 400, 401, 404 |
@@ -53,9 +56,9 @@
 
 | Method and path | Service function | Why | Role | Request DTO | Response DTO | Exceptions |
 | --- | --- | --- | --- | --- | --- | --- |
-| `GET /videos` | `videoService.listVideos` | Feed (`scope=all|following`), search, one owner's videos | Optional | `VideoQueryDto` | `VideoResponseDto[]` + meta | 400, 401 (following as guest) |
+| `GET /videos` | `videoService.listVideos` | Feed (`scope=all|following|discover`; `discover` = public accounts only, never your own), search, one owner's videos; private accounts you do not follow are left out | Optional | `VideoQueryDto` | `VideoResponseDto[]` + meta | 400, 401 (following as guest) |
 | `POST /videos` | `videoService.createVideo` | Publish an uploaded video | Signed in | `CreateVideoDto` (`mediaId`, `title`, `description`) | `VideoResponseDto` (201) | 400, 401, 409 |
-| `GET /videos/:videoId` | `videoService.getVideo` | Video page | Optional | `VideoParamsDto` | `VideoResponseDto` | 404 |
+| `GET /videos/:videoId` | `videoService.getVideo` | Video page | Optional | `VideoParamsDto` | `VideoResponseDto` | 403 `SOCIAL.PRIVATE_ACCOUNT` (private owner, not a follower), 404 |
 | `PATCH /videos/:videoId` | `videoService.updateVideo` | Edit title or description | Owner or admin | `UpdateVideoDto` | `VideoResponseDto` | 400, 401, 403, 404 |
 | `DELETE /videos/:videoId` | `videoService.deleteVideo` | Delete with comments, likes, and CDN file | Owner or admin | `VideoParamsDto` | `{ message }` | 401, 403, 404 |
 | `POST /videos/:videoId/views` | `videoService.recordView` | Count a view | Any | `VideoParamsDto` | `{ videoId }` | 404 |
@@ -78,11 +81,11 @@
 | Method and path | Service function | Why | Request DTO | Response DTO | Exceptions |
 | --- | --- | --- | --- | --- | --- |
 | `GET /chat/unread-count` | `getUnreadTotal` | Messages badge | — | `{ unreadCount }` | 401 |
-| `GET /chat/conversations` | `listConversations` | Inbox folders, paged | `ConversationQueryDto` (`folder`) | `ConversationResponseDto[]` + meta | 400, 401 |
+| `GET /chat/conversations` | `listConversations` | Inbox filters, paged: `inbox` (all), `unread`, `read`, `groups`, `requests` | `ConversationQueryDto` (`folder`) | `ConversationResponseDto[]` + meta | 400, 401 |
 | `POST /chat/conversations` | `startDirect` | Open a direct chat | `StartDirectDto` (`userName`) | `ConversationResponseDto` | 400, 401, 403, 404 |
 | `POST /chat/groups` | `createGroup` | New group | `CreateGroupDto` (`title`, `userNames`) | `ConversationResponseDto` (201) | 400, 401, 403, 404, 409 |
 | `GET /chat/conversations/:conversationId` | `getConversation` | Thread header and members | `ConversationParamsDto` | `ConversationResponseDto` | 401, 403, 404 |
-| `PATCH /chat/conversations/:conversationId` | `updateConversation` | Rename; mute for `8h`, `1w`, `always`, or `off` (the response's `me.mutedUntil` says until when) | `UpdateConversationDto` | `ConversationResponseDto` | 400, 401, 403 |
+| `PATCH /chat/conversations/:conversationId` | `updateConversation` | Rename; mute for `8h`, `1w`, `always`, or `off` (the response's `me.mutedUntil` says until when); your own `background` for this chat (`none`, `waves`, `ocean`, `mint`, `sand`, `blush`, `night`, `dots`), returned as `me.background` | `UpdateConversationDto` | `ConversationResponseDto` | 400, 401, 403 |
 | `DELETE /chat/conversations/:conversationId` | `hideConversation` | Delete chat for me | — | `{ message }` | 401, 403 |
 | `POST …/:conversationId/accept` | `acceptRequest` | Accept a request | — | `ConversationResponseDto` | 401, 403, 409 |
 | `POST …/:conversationId/read` | `markConversationRead` | Seen | — | `{ message }` | 401, 403 |
@@ -92,8 +95,17 @@
 | `GET …/:conversationId/messages` | `listMessages` | Thread, cursor-paged (`before`) | `CursorRequestDto` | `MessageResponseDto[]` + `{ nextCursor }` | 401, 403 |
 | `POST …/:conversationId/messages` | `sendMessage` | Send text, files, voice, or a video | `SendMessageDto` | `MessageResponseDto` (201) | 400, 401, 403, 404, 409 |
 | `PATCH …/messages/:messageId` | `editMessage` | Edit within 15 minutes | `EditMessageDto` | `MessageResponseDto` | 401, 403, 404, 409 |
-| `DELETE …/messages/:messageId?scope=me|everyone` | `deleteMessage` | Delete for me, or unsend | `DeleteMessageQueryDto` | `{ message }` | 401, 403, 404 |
+| `DELETE …/messages/:messageId?scope=me|everyone` | `deleteMessage` | Delete for me, or unsend (only until any other member has read it) | `DeleteMessageQueryDto` | `{ message }` | 401, 403, 404, 409 `CHAT.ALREADY_SEEN` |
 | `PUT` / `DELETE …/messages/:messageId/reaction` | `setReaction` | React, remove reaction | `ReactionDto` | `MessageResponseDto` | 400, 401, 403, 409 |
+
+## NotificationController (`controllers/notifications/notification`, base `/notifications`, all signed in)
+
+| Method and path | Service function | Why | Request DTO | Response DTO | Exceptions |
+| --- | --- | --- | --- | --- | --- |
+| `GET /notifications` | `listNotifications` | The bell, newest first; people hidden from you (blocks, deactivated) are left out | `NotificationQueryDto` (`filter=all|unread`, paging) | `NotificationResponseDto[]` + meta | 400, 401 |
+| `GET /notifications/unread-count` | `getUnreadCount` | Bell badge | — | `{ unreadCount }` | 401 |
+| `PATCH /notifications/read-all` | `markAllNotificationsRead` | Mark all read | — | `{ updated }` | 401 |
+| `PATCH /notifications/:notificationId/read` | `markNotificationRead` | Mark one read (only your own) | `NotificationParamsDto` | `NotificationResponseDto` | 401, 404 `NOTIFICATIONS.NOT_FOUND` |
 
 ## AdminRequestController (`controllers/users/admin-request`, base `/admin-requests`, all signed in)
 

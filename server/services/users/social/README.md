@@ -12,6 +12,23 @@
 | `listFollows(side, userName, query, viewerId?)` | Followers or following of a visible user, minus people hidden by a block | 404 |
 | `toUserSummaries(users, viewerId?)` | One follow lookup for the whole page | — |
 
+## Private accounts and follow requests
+
+`services/users/privacy/privacy.service.ts` and `services/users/follow-request/follow-request.service.ts`. A private account is the `privateAccount` setting. Requests live in `FollowRequest` (`requester`, `target`, unique pair, hard-deleted like the other relations).
+
+| Function | Purpose and logic | Exceptions |
+| --- | --- | --- |
+| `canViewContentOf(ownerId, viewerId?)` | The owner always; anyone for a public account; only approved followers for a private one | — |
+| `findLockedOwnerIds(viewerId?)` | Private accounts whose videos the viewer may not see (feeds exclude them) | — |
+| `followUser` on a private account | Stores a request once (notifies `follow_request`) and returns `isRequested: true`; no counters change | as follow |
+| `unfollowUser` | Also cancels a pending request | 404 |
+| `listFollowRequests(query, actor)` | People waiting, newest first, minus hidden users | — |
+| `acceptFollowRequest(userName, actor)` | Transaction: removes the request and adds the follow with both counters; notifies `follow_accepted` | 404 `SOCIAL.REQUEST_NOT_FOUND` |
+| `declineFollowRequest(userName, actor)` | Removes the request; the requester is not told | 404 when the user is hidden |
+| `acceptAllFollowRequests(userId)` | Called when `privateAccount` becomes `false` | — |
+
+Blocking also deletes pending requests in both directions. `findVideoOrFail` answers 403 `SOCIAL.PRIVATE_ACCOUNT` when a viewer (or a guest, for the video page and comments) may not see the owner's content.
+
 ## Block
 
 ### `blockUser(userName: string, actor: AuthUser): Promise<RelationStateResponseDto>`
