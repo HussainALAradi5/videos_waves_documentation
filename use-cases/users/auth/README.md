@@ -7,7 +7,7 @@
 - **Result:** A new `USR-…` user; `createdBy` is the user.
 
 ### UC-AUTH-02 User signs in
-- **Main flow:** Username or email plus password → `POST /auth/login` → a new device session → returns to the `redirect` page or the feed.
+- **Main flow:** Username, email, or mobile number plus password → `POST /auth/login` → a new device session → returns to the `redirect` page or the feed.
 - **Alternate flows:** Wrong credentials or deactivated account → one 401 message.
 
 ### UC-AUTH-03 Session renews silently

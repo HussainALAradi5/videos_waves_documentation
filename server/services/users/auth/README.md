@@ -19,7 +19,7 @@
 **Exceptions:** 409 as above; 400 from the DTO (weak password, invalid username, missing gender).
 
 ### `login(dto: LoginDto, userAgent: string): Promise<AuthResponseDto>`
-**Business logic:** A value containing `@` is an email (lowercased), otherwise a username. Unknown accounts still run one bcrypt comparison against `TIMING_SAFE_DUMMY_HASH`, so the response time does not reveal which accounts exist.
+**Business logic:** A value containing `@` is an email (lowercased). A phone-shaped value (`+973 3300 1122`, `00973...`, normalised to E.164) matches the mobile number or an all-digit username. Anything else is a username. Unknown accounts still run one bcrypt comparison against `TIMING_SAFE_DUMMY_HASH`, so the response time does not reveal which accounts exist.
 
 | Exception | When | HTTP |
 | --- | --- | --- |

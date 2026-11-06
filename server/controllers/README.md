@@ -7,7 +7,7 @@
 | Method and path | Service function | Why | Role | Request DTO | Response DTO | Exceptions |
 | --- | --- | --- | --- | --- | --- | --- |
 | `POST /auth/register` | `authService.register` | Create an account (with gender) and sign in | Any (auth limit) | `RegisterDto` | `AuthResponseDto` (201) | 400, 409 |
-| `POST /auth/login` | `authService.login` | Sign in with username or email | Any (auth limit) | `LoginDto` | `AuthResponseDto` | 400, 401 |
+| `POST /auth/login` | `authService.login` | Sign in with username, email, or mobile number | Any (auth limit) | `LoginDto` | `AuthResponseDto` | 400, 401 |
 | `POST /auth/refresh` | `sessionService.refreshSession` | Rotate tokens | Any (refresh limit) | `RefreshTokenDto` | `AuthTokensDto` | 400, 401 |
 | `POST /auth/logout` | `sessionService.revokeSession` | Sign out this device | Signed in | — | `{ message }` | 401 |
 | `POST /auth/logout-all` | `sessionService.revokeAllSessions` | Sign out every device | Signed in | — | `{ message }` | 401 |
