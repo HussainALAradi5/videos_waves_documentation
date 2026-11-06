@@ -12,6 +12,16 @@ This repository holds the project documentation. The code lives in three separat
 
 On GitHub: [server](https://github.com/HussainALAradi5/videos_waves_server), [web client](https://github.com/HussainALAradi5/videos_waves_client), [mobile](https://github.com/HussainALAradi5/videos_waves_mobile), [documentation](https://github.com/HussainALAradi5/videos_waves_documentation).
 
+## Live demo
+
+| Part | Address |
+| --- | --- |
+| Web app | https://videos-waves-client.vercel.app |
+| API (health) | https://videos-waves-api.onrender.com/health |
+| Mobile web demo | https://hussainalaradi5.github.io/videos_waves_mobile/ |
+
+Demo accounts: `admin` and `moderator` (admins), `viewer`, `lina`, `omar`, and `maya` (users; `maya` is a private account). Passwords are the `SEED_ADMIN_PASSWORD` and `SEED_USER_PASSWORD` values set on Render. The API runs on Render's free plan and sleeps after about 15 minutes idle; the first request after that takes up to a minute.
+
 ## Contents
 
 | Section | What it covers |
@@ -45,7 +55,7 @@ Real screenshots live with each client, in one section each:
 
 ## Known limits
 
-- **Not deployed yet:** the live demo needs free Atlas, ImageKit, Render, and Vercel accounts (see [deployment](deployment/README.md)).
+- **Deployed:** Atlas (Frankfurt), ImageKit, Render, and Vercel on free plans; see [Live demo](#live-demo) and [deployment](deployment/README.md).
 - **ImageKit** uploads have not been run against a real account; tests and checks used the local provider.
 - **Render free plan** sleeps after 15 minutes; the first visit then takes about a minute.
 - **Mobile** was checked as a web build and a release APK build, not on a phone or emulator.

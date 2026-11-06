@@ -10,6 +10,20 @@ Every service below has a free plan. Each needs an account that you create and s
 | Web client | Vercel, Hobby plan | Next.js defaults | `https://<project>.vercel.app` |
 | Mobile web demo and APK | GitHub Pages and Actions | `videos_waves_mobile/.github/workflows/web-demo.yml` | `https://hussainalaradi5.github.io/videos_waves_mobile/` |
 
+## Current deployment
+
+| Part | Address |
+| --- | --- |
+| Web app (Vercel project `videos-waves-client`) | https://videos-waves-client.vercel.app |
+| API (Render service `videos-waves-api`, Frankfurt) | https://videos-waves-api.onrender.com |
+| Database | Atlas project `videos-waves`, free cluster `VideosWaves` (AWS Frankfurt), database `videos_waves` |
+| Media | ImageKit ID `videoswaves` (Frankfurt), endpoint `https://ik.imagekit.io/videoswaves` |
+| Mobile web demo | https://hussainalaradi5.github.io/videos_waves_mobile/ |
+
+Notes from the first deploy:
+- The build command is `npm ci --include=dev && npm run build`: with `NODE_ENV=production`, plain `npm ci` skips the pinned TypeScript and the build falls back to a newer global one that rejects the config.
+- Vercel's GitHub app needs access to `videos_waves_client` (GitHub → Settings → Applications → Vercel → Configure), even though the repository is public.
+
 ## Order
 
 1. **Atlas:** create a free M0 cluster, a database user, and allow network access from anywhere (`0.0.0.0/0`, since Render's free plan has no fixed IP). Copy the connection string and add the database name: `…mongodb.net/videos_waves?retryWrites=true&w=majority`.
