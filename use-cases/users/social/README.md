@@ -12,8 +12,10 @@
 ### UC-SOC-03 User browses followers or following
 - **Main flow:** Taps a count → a sheet or dialog with a paged list and inline Follow buttons; people hidden by a block are left out.
 
-### UC-SOC-04 User searches for people
-- **Main flow:** Search tab → types (debounced) → `GET /users/search` → results with Follow.
+### UC-SOC-04 User finds someone by email or phone
+- **Main flow:** Search tab (or New message) → types the person's **full** email or phone number with the country code → `GET /users/search` → that one account, with Follow (or ready to message).
+- **Alternate flows:** A partial email, a name, or a username → no request is sent and the page explains what to type. No account uses it → "No account uses that email or phone number."
+- **Privacy:** phone numbers are optional (set at sign-up or in Settings) and never shown to other people.
 
 ### UC-SOC-05 User blocks someone
 - **Main flow:** ⋯ → Block → confirmation → `PUT /users/:userName/block` → follows end both ways → each disappears from the other's feed, comments, search, and chat; neither can message the other.

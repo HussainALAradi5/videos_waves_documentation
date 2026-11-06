@@ -9,7 +9,7 @@
 | `updateAvatar(dto, actor)` | Claims an `avatar` media (or with `mediaId: null` returns to the standard picture), releases the previous avatar in the same transaction, then purges its CDN file | 404; 400/409 from `claimMedia` |
 | `changePassword(userId, dto, userAgent)` | Checks the current password, saves the new hash, **signs every device out**, and returns a fresh session for this one | 400 `USERS.CURRENT_PASSWORD_INCORRECT`, 404 |
 | `deactivateAccount(userId)` | Soft-deletes the user and revokes every session | 404 |
-| `searchUsers(query, viewerId?)` | Public people search (username contains the text, case-insensitive); users hidden by a block never appear | — |
+| `searchUsers(query, viewerId?)` | People search (Search tab, new message, add to group). Only a **full email** (any case) or a **full phone number** (spaces, dashes, brackets, and a leading `00` are normalised to E.164) finds an account, so nobody can browse the member list; partial text and usernames return an empty page. Results go through the shared `paginate` utility and never include the phone. Hidden and deactivated users never appear | — |
 | `listUsers(query)` | Admin directory with email and role | — |
 
 ## Account status (`services/users/account-status/account-status.service.ts`)
