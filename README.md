@@ -10,7 +10,7 @@ This repository holds the project documentation. The code lives in three separat
 | Web client | Next.js 16 (App Router), React 19, Chakra UI 3, TanStack Query 5 | [../videos_waves_client](../videos_waves_client) |
 | Mobile | Flutter 3.47, provider, go_router, Dio | [../videos_waves_mobile](../videos_waves_mobile) |
 
-The original monorepo (`videos_waves`, remote `HussainALAradi5/videos_waves`) is the parent folder. The server and client repositories were split from it with `git subtree split`, so each keeps its own history.
+The server and client repositories were split from the original `videos_waves` monorepo with `git subtree split`, so each keeps its own history. The monorepo has been retired; the four repositories sit side by side in a plain `videos_waves` folder.
 
 ## Contents
 
